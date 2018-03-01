@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PokeRPG</title>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body{
+	width: 100%;
+	height: 100%;
+	min-height: 480px;
+	overflow: hidden;
+	background-color: #2d2d2d;
+	font-family: 'Dosis', sans-serif;
+}
+
+@font-face {
+    font-family: 'Font1';
+    src: url('resources/fonts/font1.ttf');
+}
+
+@font-face {
+    font-family: 'Font2';
+    src: url('resources/fonts/font2.ttf');
+}
+
+@font-face {
+    font-family: 'Font3';
+    src: url('resources/fonts/font3.ttf');
+}
+
+@font-face {
+    font-family: 'Font4';
+    src: url('resources/fonts/font4.ttf');
+}
+
+hr {
+	border-color: #000000
+}
+/* ON-SCREEN CONTROLS */
+#controls{
+  width: 126px; height: 46px;
+  position: absolute; bottom: 10px; right: 10px;
+  background-image: url(resources/ui/controls.png);
+  background-position: center bottom;
+  z-index: 990; }
+#controls #z, #controls #x, #controls #up, #controls #down, #controls #left, #controls #right{ height: 18px; width: 18px; background-image: url(resources/ui/controls.png); position: absolute; }
+#controls #z, #controls #x, #controls #down, #controls #left, #controls #right{ top: 24px; }
+#controls #z{ background-position: -4px -24px; left: 4px; }
+#controls #x{ background-position: -24px -24px; left: 24px; }
+#controls #up{ background-position: -84px -4px; left: 84px; top: 4px; }
+#controls #down{ background-position: -84px -24px; left: 84px; }
+#controls #left{ background-position: -64px -24px; left: 64px; }
+#controls #right{ background-position: -104px -24px; left: 104px; }
+#controls #z.active{ background-position: -4px -72px; }
+#controls #x.active{ background-position: -24px -72px; }
+#controls #up.active{ background-position: -84px -52px; }
+#controls #down.active{ background-position: -84px -72px; }
+#controls #left.active{ background-position: -64px -72px; }
+#controls #right.active{ background-position: -104px -72px; }
+#canvas { box-shadow: 0px 0px 20px 1px #000, 0 0 2px rgba(0, 0, 0, 0.2) inset; }
+body:before 
+{ 
+   content: "";
+   position: fixed;
+   top: -10px;
+   left: 0;
+   width: 100%;
+   height: 10px;
+   z-index: 100;
+   -webkit-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+   -moz-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+   box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<script src="http://localhost:2828/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<link href="//fonts.googleapis.com/css?family=Dosis:500,600,700" rel="stylesheet" type="text/css">
+<script>jQuery.noConflict();</script>
+<script src="js/pokerpg.client.js"></script>
+
+<script>
+jQuery(function(){
+	var canvas = document.getElementById('canvas');
+	initGame(canvas, document.getElementById('canvasContainer'));
+});
+
+</script>
+</head>
+<body>
+<div id="canvasContainer"><canvas id="canvas"></canvas>
+<div id="controls"><div id="z"></div><div id="x"></div><div id="up"></div><div id="down"></div><div id="left"></div><div id="right"></div></div>
+</div>
+<script>
+
+if((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))){
+	window.addEventListener("load",function() {
+	  setTimeout(function(){
+		window.scrollTo(0, 0);
+		document.body.setAttribute("orient", "landscape");
+	  }, 0);
+	});
+}
+
+</script>
+</body>

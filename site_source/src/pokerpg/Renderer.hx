@@ -1,0 +1,303 @@
+package pokerpg;
+
+import pokerpg.Battle;
+import UserAgentContext;
+
+/**
+ * ...
+ * @author Beetle
+ */
+
+class Renderer {
+	static private var willRender:Bool;
+	static public var numRTicks = 0;
+	static public var cameraX:Float;
+	static public var cameraY:Float;
+	
+	static private var renderHooks:Array < Void -> Void > ;
+	static private var gameRenderHooks:Array < Void -> Void > ;
+	
+	static public var curTransition:Transition;
+	
+	static public var clouds:ImageResource;
+	
+	static public var scale:Bool;
+	
+	static public function setup():Void {
+		resetHooks();
+	}
+	
+	static public function render():Void {
+		if (willRender) return;
+		willRender = true;
+		
+		var func:(Void -> Void) -> Void = untyped __js__("window.requestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.webkitRequestAnimationFrame || window.oRequestAnimationFrame");
+		if (func == null) func = function(tmp:Void->Void):Void { (untyped __js__("setTimeout"))(realRender, 1); };
+		
+		func(realRender);
+		
+		
+	}
+	
+	static public function getOffsetX():Int {
+		return Math.floor(Game.curGame.map.tilewidth * -cameraX);
+	}
+	
+	static public function getOffsetY():Int {
+		return Math.floor(Game.curGame.map.tileheight * -cameraY);
+	}
+	
+	static public function hookRender(func:Void->Void):Void {
+		if(Lambda.indexOf(renderHooks, func) != -1) return;
+		renderHooks.push(func);
+	}
+	
+	static public function unHookRender(func:Void->Void):Void {
+		var i = Lambda.indexOf(renderHooks, func);
+		if(i != -1) renderHooks.splice(i, 1);
+	}
+	
+	static public function resetHooks():Void {
+		renderHooks = [];
+		gameRenderHooks = [];
+	}
+	
+	static private function realRender():Void {
+		willRender = false;
+		var ctx = Main.ctx;
+		var canvas = Main.canvas;
+		var onScreenCtx = Main.onScreenCtx;
+		var onScreenCanvas = Main.onScreenCanvas;
+		var tmpCtx = Main.tmpCtx;
+		var tmpCanvas = Main.tmpCanvas;
+		
+		
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = 'rgba(0, 0, 0, 0.20)';
+			
+		var g = Game.curGame;
+		
+		switch(Game.state) {
+		case ST_UNKNOWN:
+			ctx.fillStyle = '#000000';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+		case ST_MAP:
+			if (g == null) return;
+			var map = g.map;
+			if(map == null) throw 'No map in memory';
+			
+			var chr = g.getPlayerChar();
+			if(chr != null){
+				cameraX = chr.getRenderPosX() / map.tilewidth + 1 - (Main.screenWidth / map.tilewidth) / 2;
+				cameraY = chr.getRenderPosY() / map.tileheight - (Main.screenHeight / map.tileheight) / 2;
+			}
+			
+			map.render(ctx);
+			map.renderAnimated(ctx);
+			Game.curGame.renderObjects(ctx);
+			map.renderOver(ctx);
+			
+			for(hk in gameRenderHooks) hk();
+			
+			Chat.renderBubbles(ctx);
+			
+			if (g.inBattle && g.battle.step != BATTLE_STEP_TRANSITION) {
+				ctx.save();
+				ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+				ctx.fillRect(0, 0, Main.canvas.width, Main.canvas.height);	
+				ctx.restore();
+				g.battle.render(ctx);
+			}
+		
+			Chat.render(ctx);
+			
+			if(!g.inBattle){
+				UI.renderPokemonParty(ctx);
+			}
+			
+			if (chr.speechText != '') {
+				ctx.save();
+				chr.drawSpeechMessage(ctx);
+				ctx.restore();
+			}
+			
+			if (renderHooks.length > 0) {
+				var arr = renderHooks.copy();
+				for (i in 0...arr.length) arr[i]();
+			}
+			
+			// Right Click Box
+			if (UI.renderRightMouseBox && !g.inBattle) {
+				if (UI.mouseOverUsernamesFix.length < 1) { UI.mouseOverUsernamesFix.push(Game.username); }
+				
+				var maxWidth = UI.getMaxUsernameWidth();
+				maxWidth = (maxWidth < 110 ? 110 : maxWidth);
+				var numHeight = 20 * (UI.mouseOverUsernamesFix.length < 1 ? 1 : UI.mouseOverUsernamesFix.length) + 25;
+				
+				if (UI.mouseX >= (chr.lastMouseX - 10) && UI.mouseY >= (chr.lastMouseY - 10) && UI.mouseX <= (chr.lastMouseX + maxWidth - 10) && UI.mouseY <= (chr.lastMouseY + numHeight)) {
+					Util.drawRoundedRect(chr.lastMouseX - 10, chr.lastMouseY - 10, Std.int(maxWidth), numHeight, 5, '#000000', 0.75);
+					ctx.save();
+					ctx.font = '12px Font2';
+					Renderer.drawShadowText2(ctx, 'Select character:', chr.lastMouseX - 5, chr.lastMouseY + 5, '#FFFFFF', '#000000');
+					for (i in 0...UI.mouseOverUsernamesFix.length) {
+						Renderer.drawShadowText2(ctx, UI.mouseOverUsernamesFix[i], chr.lastMouseX + 5, chr.lastMouseY + 25, '#FFFFFF', '#000000');
+						ctx.translate(0, 20);
+					}
+					ctx.restore();
+				}
+				else {
+					UI.renderRightMouseBox = false;
+					UI.mouseOverUsernamesFix = [];
+				}
+			}
+			
+			// Clouds
+			/*var tmp = Math.floor((Date.now().getTime() % 1000) / 250);
+			if(tmp == 3) tmp = 1;
+			tmp *= 2;
+			
+			clouds = Game.curGame.getImage('resources/ui/002-Clouds01.png');
+			var pattern = ctx.createPattern(clouds.obj, 'repeat');
+			Main.clearTmpCanvas();
+			tmpCtx.save();
+			tmpCtx.rect(0, 0, canvas.width, canvas.height);
+			tmpCtx.fillStyle = pattern;
+			tmpCtx.fill();
+			tmpCtx.restore();
+			
+			ctx.save();
+			ctx.globalAlpha = 0.20;
+			ctx.globalCompositeOperation = 'darker';
+			ctx.drawImage(tmpCanvas, 0, 0, canvas.width, canvas.height, tmp, 0, canvas.width, canvas.height);
+			ctx.restore();*/
+			
+			// DEBUG
+			if (Game.accountLevel >= 70) {
+				ctx.save();
+				Util.drawRoundedRect(10, 8, 180, 160, 5, '#FFFFFF', 0.75);
+				ctx.font = '14px Font4';
+				ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+				ctx.fillText('DEBUG MODE', 20, 25, 100);
+				ctx.font = '12px Font2';
+				ctx.fillText('Mapname: ' + map.id, 20, 40, 100);
+				ctx.fillText('X: ' + chr.x + '   Y: ' + chr.y + '   Dir: ' + chr.direction, 20, 55, 100);
+				ctx.fillText('RenderPos X: ' + chr.getRenderPosX(), 20, 70, 100);
+				ctx.fillText('RenderPos Y: ' + chr.getRenderPosY(), 20, 80, 100);
+				ctx.fillText('Offset X: ' + Math.round(chr.renderOffsetX) + '   Offset Y: ' + Math.round(chr.renderOffsetY), 20, 100, 1000);
+				ctx.fillText('Walking? ' + chr.walking + ' Jumping? ' + chr.jumping, 20, 120, 1000);
+				ctx.fillText('Mouse X: ' + UI.mouseX, 20, 140, 1000);
+				ctx.fillText('Mouse Y: ' + UI.mouseY, 20, 150, 1000);
+				ctx.fillText('Mouse Down: ' + UI.mouseDown, 20, 160, 1000);
+				ctx.restore();
+			}
+			
+			/*/ Test HUD
+			ctx.save();
+			
+			Util.drawRoundedRect(0, 530, 800, 70, 0, '#000000', 0.75);
+			ctx.globalAlpha = 1;
+			ctx.strokeStyle = 'white';
+			ctx.strokeRect(-1, 530, 802, 71);
+			
+			ctx.restore();*/
+			
+		case ST_LOADING:
+			ctx.fillStyle = '#000000';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = '#FFFFFF';
+			ctx.font = '12pt Dosis';
+			
+			if(Game.loadError){
+				ctx.fillText('Failed loading files', 10, 30);
+			}else{
+				if(Game.pendingLoad == 0){
+					Game.state = ST_MAP;
+					
+					var step = 0;
+					var func:Void->Void = null;
+					func = function() {
+						ctx.fillStyle = '#000000';
+						ctx.globalAlpha = 1 - (step / 8);
+						ctx.fillRect(0, 0, canvas.width, canvas.height);
+						ctx.globalAlpha = 1;
+						++step;
+						if(step >= 8){
+							unHookRender(func);
+						}
+					}
+					
+					hookRender(func);
+					
+					render();
+				}else{
+					ctx.fillText('Loading... ' + (100 - Game.pendingLoad) + '%', 10, 30);
+				}
+			}
+			
+		case ST_DISCONNECTED:
+			ctx.fillStyle = '#000000';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = '#FFFFFF';
+			ctx.font = '12pt Dosis';
+			ctx.fillText("Disconnected from the PokeRPG Server", 10, 30);
+		case ST_TITLE:
+			TitleScreen.render(ctx);
+		case ST_REGISTER:
+			RegisterScreen.render(ctx);
+		case ST_NEWGAME:
+			NewGameScreen.render(ctx);
+		}
+		
+		UI.render(ctx);
+		if (isInTransition()) curTransition.render(ctx);
+		
+		onScreenCtx.clearRect(0, 0, onScreenCanvas.width, onScreenCanvas.height);
+		onScreenCtx.drawImage(canvas, 0, 0);
+		
+		++numRTicks;
+	}
+	
+	static public function drawOverlay(ctx:CanvasRenderingContext2D, x:Int, y:Int, width:Int, height:Int, drawFunc:CanvasRenderingContext2D->Void):Void {
+		var tmpCtx = Main.tmpCtx;
+		var overlayWidth:Int = width + 6;
+		var overlayHeight:Int = height + 6;
+		
+		
+		tmpCtx.clearRect(0, 0, overlayWidth, overlayHeight);
+		tmpCtx.save();
+		tmpCtx.fillStyle = '#000000';
+		tmpCtx.fillRect(0, 0, overlayWidth, overlayHeight);
+		tmpCtx.globalAlpha = 0.25;
+		tmpCtx.shadowBlur = 10;
+		tmpCtx.globalCompositeOperation = "destination-atop";
+		drawFunc(tmpCtx);
+		tmpCtx.restore();
+		
+		ctx.drawImage(Main.tmpCanvas, 0, 0, width, height, x - 2, y, width, height);
+		ctx.drawImage(Main.tmpCanvas, 0, 0, width, height, x, y - 2, width, height);
+		ctx.drawImage(Main.tmpCanvas, 0, 0, width, height, x, y + 2, width, height);
+		ctx.drawImage(Main.tmpCanvas, 0, 0, width, height, x + 2, y, width, height);
+	}
+	
+	inline static public function drawShadowText2(ctx:CanvasRenderingContext2D, str:String, x:Int, y:Int, color:String, shadowColor:String):Void {
+		ctx.fillStyle = shadowColor;
+		ctx.fillText(str, x + 2, y);
+		ctx.fillText(str, x, y + 2);
+		ctx.fillText(str, x + 2, y + 2);
+		ctx.fillStyle = color;
+		ctx.fillText(str, x, y);
+	}
+	
+	static public function startTransition(t:Transition):Transition {
+		curTransition = t;
+		return t;
+	}
+	
+	static public function stopTransition():Void {
+		curTransition = null;
+	}
+	
+	static inline public function isInTransition():Bool {
+		return curTransition != null;
+	}
+}

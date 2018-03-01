@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PokeRPG</title>
+<style>
+
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1, IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href="favicon.png" rel="icon" type="image/png" />
+
+<script src="http://pkpadv.zapto.org:2828/socket.io/socket.io.js"></script>
+<script src="js/jquery-1.9.1.min.js"></script>
+<link href="site.css" rel="stylesheet" type="text/css" />
+<link href="bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="http://fonts.googleapis.com/css?family=Dosis:500,600,700" rel="stylesheet" type="text/css">
+<script>jQuery.noConflict();</script>
+<script src="js/pokerpg.client.js"></script>
+
+<script>
+jQuery(function(){
+	var canvas = document.getElementById('canvas');
+	initGame(canvas, document.getElementById('canvasContainer'));
+});
+
+</script>
+</head>
+<body oncontextmenu="return false;">
+<div id="canvasContainer"><canvas id="canvas">Your browser does not support the canvas element.</canvas>
+<div id="menuContainer"></div>
+<div id="controls"><div id="z"></div><div id="x"></div><div id="up"></div><div id="down"></div><div id="left"></div><div id="right"></div></div>
+</div>
+<script>
+
+if((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))){
+	window.addEventListener("load",function() {
+	  setTimeout(function(){
+		window.scrollTo(0, 0);
+		document.body.setAttribute("orient", "landscape");
+	  }, 0);
+	});
+}
+
+</script>
+</body>

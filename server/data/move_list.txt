@@ -1,0 +1,208 @@
+<-- Move List -->
+
+dragon rage (Eh? Always Takes 40HP)
+supersonic (Does only confusion)
+swagger (buffs TARGET and confuse)
+tri attack (Can inflict different types of status aliments)
+
+== Unique Moves == 
+
+Transform
+Spite
+Future Sight
+Curse
+Night Shade
+Mimic
+Dream Eater
+Destiny Bond
+Nightmare
+aromatherapy (Heal)
+attract 
+baton pass 
+belly drum (Unique, half Hp to raise ATK)
+block 
+brick break TM 
+camouflage 
+charge 
+conversion 
+conversion 2 
+counter 
+detect (Unique? Protects from effects of moves)
+dig TM28 (Unique? 2 turn move)
+disable 
+encore 
+endeavor 
+endure 
+facade 
+false swipe 
+flail (Unique? Variable power)
+flatter (Unique, buffs and confuses target)
+focus energy (Unique, Increases crit hit chance)
+fury cutter (Unique, increases power if successful)
+frustration TM 
+grudge 
+haze (Unique? Status reset)
+hidden power TM 
+hyper beam TM (Unique? Requires recharge after hit)
+imprison 
+ingrain 
+follow me (Unique? Used in double battles)
+foresight (Unique? removes a Ghost-type Pokémon's immunity to Fighting-type and Normal-type)
+light screen TM 
+magnitude (Unique? Power varies)
+mean look 
+memento (Causes USER to faint, lowers target atk,spAtk by 2)
+metronome (Unique? Randon selects move)
+mind reader 
+mirror coat 
+mirror move 
+mist 
+moonlight 
+odor sleuth (Unique? removes a Ghost-type Pokémon's immunity to Fighting-type and Normal-type)
+pay day 
+perish song 
+protect TM17 
+psych up 
+pursuit 
+rage 
+rapid spin 
+recycle 
+refresh (Unique, cures certain status)
+rest TM (Unique, heal)
+return TM (Unique? Dmg depends on happiness)
+revenge 
+reversal 
+role play 
+secret power TM 
+seismic toss 
+sheer cold (Unique, one hit knockout)
+skill swap (Unqiue? Exchange abilities)
+sleep talk 
+sonicboom (Unique, ghosts immune)
+spikes 
+splash 
+submission 
+substitute 
+super fang (Unique? damage equal to 50% of the target's current HP)
+take down (Unique? recoil dmg)
+taunt TM 
+teleport (
+toxic TM (Unique, poison)
+torment (Unique? prevents move)
+yawn 
+
+$ Multiple Hits $
+
+barrage 
+bone rush 
+bullet seed TM 
+comet punch 
+doubleslap 
+fury attack 
+fury swipes 
+icicle spear 
+pin missile 
+rock blast 
+spike cannon 
+
+@ Multiple Turns @
+
+bind 
+clamp 
+fire spin 
+outrage 
+petal dance 
+reflect TM (Unique, Mutliple turn buff)
+rollout 
+safeguard TM (Mutliple Turns, prevents status aliments)
+sand tomb 
+thrash 
+uproar 
+wrap 
+
+# Hits twice #
+
+bonemerang 
+double kick 
+twineedle 
+
+% Two Turns %
+
+bounce 
+skull bash 
+sky attack 
+solarbeam TM 
+
+^ Increased Priority ^
+
+extremespeed 
+fake out 
+helping hand (Increased priority, double, triple battle)
+mach punch 
+quick attack 
+snatch 
+
+& Decreased Priority &
+ 
+focus punch TM 
+vital throw 
+
+* Weather Effect *
+
+hail TM 
+rain dance TM 
+sandstorm TM 
+sunny day TM 
+synthesis (restore HP based on weather)
+
+!Infilcts dmg based on target HP!
+
+fissure 
+guillotine 
+horn drill 
+
++ Recovers 50% HP +
+
+recover 
+softboiled 
+
+= Reduce DMH =
+
+mud sport (Unique, reduces electric type dmg)
+water sport (Unique? reduce fire type damage)
+
+- End Pokemon Battles -
+
+roar TM 
+whirlwind 
+
+/ Missing Causes Crash /
+
+hi jump kick 
+jump kick 
+
+. Destruction .
+
+explosion (Unique? selfdestruct)
+selfdestruct (Unique? Weaker version of explosion)
+
+` Gain HP from DMG `
+
+absorb (Unique? Attacks, gains HP from damage)
+giga drain TM (Unique? Attacks, gains HP from damage)
+leech life (Unique? gains HP from damage)
+mega drain (Unique? Attacks, gains HP from damage)
+leech seed (Unique? Drains target HP, restores user HP)
+
+> Held Items >
+
+covet (Unique? Damages then steals held item)
+knock off (Unique? Dmg and removes target held item)
+thief (Unique? Does dmg and steals held item)
+trick (Unique? Switches held item with target)
+
+< Stockpile <
+
+spit up (Unique, used with stockpile)
+stockpile (Unique, used with spit up)
+swallow (UNique, used with stockile to heal)

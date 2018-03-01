@@ -1,0 +1,62 @@
+package pokerpgserver;
+import js.Node;
+import pokerpgserver.SocketConnection;
+import String;
+
+/**
+ * ...
+ * @author Beetle
+ */
+
+class GameServer {
+	static private var clients:Array<Client>;
+	
+	static public function start():Void {
+		clients = [];
+		
+		var io = Node.require('socket.io').listen(2828).set('log level', 2);
+		
+		io.configure('development', function() {
+			io.enable('browser client minification');	
+			io.set('transports', ['websocket']);
+		});
+		
+		io.sockets.on('connection', function(socket:SocketConnection):Void {
+			clients.push(new Client(socket));
+		});
+		
+		Node.setInterval(sendUpdates, 250);
+	}
+	
+	static public function kickPlayer(username:String):Void {
+		for (c in clients) {
+			if (c.username == username) {
+				c.kick();
+			}
+		}
+	}
+	
+	static public function getCharByUsername(username:String):Client {
+		for (c in clients) {
+			if (Utils.equalsStrings(c.username,username)) {
+				return c;
+			}
+		}
+		return null;
+	}
+	
+	static public function sendUpdates():Void {
+		for (ins in GameData.mapsInstaces) {
+			if (ins.getCharCount() == 0) continue;
+			var d = ins.generateNetworkObjectData();
+			
+			for (c in ins.chars) {
+				c.client.socket.volatile.emit('update', d);
+			}
+		}
+	}
+	
+	static inline public function getClientCount():Int {
+		return clients.length;
+	}
+}
